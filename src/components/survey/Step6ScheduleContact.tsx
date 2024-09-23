@@ -2,7 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { useSurvey } from '@/context/SurveyContext';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -10,35 +16,75 @@ import { Textarea } from '@/components/ui/textarea';
 export default function Step6ScheduleContact() {
   const { updateSurveyData, setIsStepValid } = useSurvey();
   const [preferredTime, setPreferredTime] = useState('');
-  const [preferredDay, setPreferredDay] = useState(''); // New state
+  const [preferredDay, setPreferredDay] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [additionalInfo, setAdditionalInfo] = useState('');
-  const [errors, setErrors] = useState({ preferredTime: '', preferredDay: '', phoneNumber: '' }); // Updated errors
+  const [errors, setErrors] = useState({
+    preferredTime: '',
+    preferredDay: '',
+    phoneNumber: '',
+  });
+
+  // Touched states to track user interaction
+  const [touched, setTouched] = useState({
+    preferredTime: false,
+    preferredDay: false,
+    phoneNumber: false,
+  });
 
   useEffect(() => {
     const isPreferredTimeValid = preferredTime !== '';
-    const isPreferredDayValid = preferredDay !== ''; // New validation
+    const isPreferredDayValid = preferredDay !== '';
     const isPhoneNumberValid = /^\d{10}$/.test(phoneNumber);
 
-    const isValid = isPreferredTimeValid && isPreferredDayValid && isPhoneNumberValid; // Updated validation
+    const isValid =
+      isPreferredTimeValid && isPreferredDayValid && isPhoneNumberValid;
     setIsStepValid(isValid);
 
     setErrors({
-      preferredTime: isPreferredTimeValid ? '' : 'Please select a preferred contact time',
-      preferredDay: isPreferredDayValid ? '' : 'Please select a preferred contact day', // New error message
-      phoneNumber: isPhoneNumberValid ? '' : 'Please enter a valid 10-digit phone number',
+      preferredTime:
+        touched.preferredTime && !isPreferredTimeValid
+          ? 'Please select a preferred contact time'
+          : '',
+      preferredDay:
+        touched.preferredDay && !isPreferredDayValid
+          ? 'Please select a preferred contact day'
+          : '',
+      phoneNumber:
+        touched.phoneNumber && !isPhoneNumberValid
+          ? 'Please enter a valid 10-digit phone number'
+          : '',
     });
 
     if (isValid) {
-      updateSurveyData({ preferredTime, preferredDay, phoneNumber, additionalInfo }); // Updated data
+      updateSurveyData({
+        preferredTime,
+        preferredDay,
+        phoneNumber,
+        additionalInfo,
+      });
     }
-  }, [preferredTime, preferredDay, phoneNumber, additionalInfo]);
+  }, [
+    preferredTime,
+    preferredDay,
+    phoneNumber,
+    additionalInfo,
+    touched,
+    setIsStepValid,
+    updateSurveyData,
+  ]);
 
   return (
     <form className="space-y-6">
       <div className="space-y-2">
         <Label htmlFor="preferredTime">Preferred contact time</Label>
-        <Select onValueChange={setPreferredTime} value={preferredTime}>
+        <Select
+          onValueChange={(value) => {
+            setPreferredTime(value);
+            setTouched((prev) => ({ ...prev, preferredTime: true }));
+          }}
+          value={preferredTime}
+        >
           <SelectTrigger id="preferredTime">
             <SelectValue placeholder="Select preferred time" />
           </SelectTrigger>
@@ -48,12 +94,20 @@ export default function Step6ScheduleContact() {
             <SelectItem value="evening">Evening</SelectItem>
           </SelectContent>
         </Select>
-        {errors.preferredTime && <p className="text-red-500 text-sm">{errors.preferredTime}</p>}
+        {errors.preferredTime && (
+          <p className="text-red-500 text-sm">{errors.preferredTime}</p>
+        )}
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="preferredDay">Preferred contact day</Label>
-        <Select onValueChange={setPreferredDay} value={preferredDay}>
+        <Select
+          onValueChange={(value) => {
+            setPreferredDay(value);
+            setTouched((prev) => ({ ...prev, preferredDay: true }));
+          }}
+          value={preferredDay}
+        >
           <SelectTrigger id="preferredDay">
             <SelectValue placeholder="Select preferred day" />
           </SelectTrigger>
@@ -67,7 +121,9 @@ export default function Step6ScheduleContact() {
             <SelectItem value="sunday">Sunday</SelectItem>
           </SelectContent>
         </Select>
-        {errors.preferredDay && <p className="text-red-500 text-sm">{errors.preferredDay}</p>}
+        {errors.preferredDay && (
+          <p className="text-red-500 text-sm">{errors.preferredDay}</p>
+        )}
       </div>
 
       <div className="space-y-2">
@@ -76,11 +132,18 @@ export default function Step6ScheduleContact() {
           id="phoneNumber"
           type="tel"
           value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)}
+          onChange={(e) => {
+            setPhoneNumber(e.target.value);
+          }}
+          onBlur={() =>
+            setTouched((prev) => ({ ...prev, phoneNumber: true }))
+          }
           placeholder="Enter your phone number"
           required
         />
-        {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber}</p>}
+        {errors.phoneNumber && (
+          <p className="text-red-500 text-sm">{errors.phoneNumber}</p>
+        )}
       </div>
 
       <div className="space-y-2">

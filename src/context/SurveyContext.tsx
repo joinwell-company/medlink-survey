@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import axios from 'axios';
 
 export interface SurveyData {
@@ -7,11 +7,11 @@ export interface SurveyData {
   dateOfBirth?: string;
   primaryInvestmentGoals?: string[];
   secondaryInvestmentGoals?: string[];
-  financialWellbeing?: number; // Changed from string to number
-  hasSavings?: number; // Changed from string to number
+  financialWellbeing?: number;
+  hasSavings?: number;
   monthlySavings?: number;
   preferredTime?: string;
-  preferredDay?: string; // New field
+  preferredDay?: string;
   phoneNumber?: string;
   additionalInfo?: string;
 }
@@ -36,9 +36,9 @@ export function SurveyProvider({ children }: { children: ReactNode }) {
   const [surveyData, setSurveyData] = useState<SurveyData>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const updateSurveyData = (data: Partial<SurveyData>) => {
-    setSurveyData(prevData => ({ ...prevData, ...data }));
-  };
+  const updateSurveyData = useCallback((data: Partial<SurveyData>) => {
+    setSurveyData((prevData) => ({ ...prevData, ...data }));
+  }, []);
 
   const submitSurvey = async () => {
     try {
@@ -53,24 +53,25 @@ export function SurveyProvider({ children }: { children: ReactNode }) {
         return response.data;
       }
     } catch (error) {
-      // Handle error
       console.error('Error submitting survey:', error);
       setSubmitError('Failed to submit survey. Please try again.');
     }
   };
 
   return (
-    <SurveyContext.Provider value={{
-      currentStep,
-      setCurrentStep,
-      isStepValid,
-      setIsStepValid,
-      surveyData,
-      updateSurveyData,
-      submitError,
-      setSubmitError,
-      submitSurvey
-    }}>
+    <SurveyContext.Provider
+      value={{
+        currentStep,
+        setCurrentStep,
+        isStepValid,
+        setIsStepValid,
+        surveyData,
+        updateSurveyData,
+        submitError,
+        setSubmitError,
+        submitSurvey,
+      }}
+    >
       {children}
     </SurveyContext.Provider>
   );

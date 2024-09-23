@@ -10,6 +10,8 @@ export default function Step5ContactInfo() {
   const [email, setEmail] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [errors, setErrors] = useState({ email: '', dateOfBirth: '' });
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [dateOfBirthTouched, setDateOfBirthTouched] = useState(false);
 
   useEffect(() => {
     const validateEmail = (email: string) => {
@@ -20,23 +22,38 @@ export default function Step5ContactInfo() {
     const validateDateOfBirth = (dob: string) => {
       const date = new Date(dob);
       const now = new Date();
-      return !isNaN(date.getTime()) && date < now && date.getFullYear() > 1900;
+      return (
+        !isNaN(date.getTime()) &&
+        date < now &&
+        date.getFullYear() > 1900 &&
+        date.getFullYear() < now.getFullYear()
+      );
     };
 
     const emailValid = validateEmail(email);
     const dobValid = validateDateOfBirth(dateOfBirth);
 
     setErrors({
-      email: emailValid ? '' : 'Please enter a valid email address',
-      dateOfBirth: dobValid ? '' : 'Please enter a valid date of birth',
+      email: emailTouched && !emailValid ? 'Please enter a valid email address' : '',
+      dateOfBirth:
+        dateOfBirthTouched && !dobValid ? 'Please enter a valid date of birth' : '',
     });
 
-    setIsStepValid(emailValid && dobValid);
-    
-    if (emailValid && dobValid) {
+    const isValid =
+      email !== '' && dateOfBirth !== '' && emailValid && dobValid;
+    setIsStepValid(isValid);
+
+    if (isValid) {
       updateSurveyData({ email, dateOfBirth });
     }
-  }, [email, dateOfBirth, setIsStepValid, updateSurveyData]);
+  }, [
+    email,
+    dateOfBirth,
+    emailTouched,
+    dateOfBirthTouched,
+    setIsStepValid,
+    updateSurveyData,
+  ]);
 
   return (
     <form className="space-y-6">
@@ -47,6 +64,7 @@ export default function Step5ContactInfo() {
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          onBlur={() => setEmailTouched(true)}
           placeholder="Enter your email"
           required
         />
@@ -60,9 +78,12 @@ export default function Step5ContactInfo() {
           type="date"
           value={dateOfBirth}
           onChange={(e) => setDateOfBirth(e.target.value)}
+          onBlur={() => setDateOfBirthTouched(true)}
           required
         />
-        {errors.dateOfBirth && <p className="text-red-500 text-sm">{errors.dateOfBirth}</p>}
+        {errors.dateOfBirth && (
+          <p className="text-red-500 text-sm">{errors.dateOfBirth}</p>
+        )}
       </div>
     </form>
   );
