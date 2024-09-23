@@ -55,7 +55,7 @@ export default function SurveyStep() {
 
   const renderStep = () => {
     switch (currentStep) {
-      case 1: return <Step1Introduction />;
+      case 1: return <Step1Introduction onNext={handleNext} />;
       case 2: return <Step2PersonalInfo />;
       case 3: return (
         <Step3InvestmentGoals 
@@ -74,13 +74,15 @@ export default function SurveyStep() {
   return (
     <div>
       {renderStep()}
-      <NavigationButtons
-        onBack={handleBack}
-        onNext={handleNext}
-        showBack={currentStep > 1}
-        nextDisabled={!isStepValid}
-        nextText={currentStep === 7 ? "Submit" : "Next"}
-      />
+      {currentStep !== 1 && (
+        <NavigationButtons
+          onBack={handleBack}
+          onNext={handleNext}
+          showBack={currentStep > 1}
+          nextDisabled={!isStepValid}
+          nextText={currentStep === 7 ? "Submit" : "Next"}
+        />
+      )}
     </div>
   );
 }

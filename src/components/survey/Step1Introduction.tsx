@@ -2,8 +2,9 @@
 
 import { useEffect } from 'react';
 import { useSurvey } from '@/context/SurveyContext';
+import { NavigationButtons } from '@/components/ui/NavigationButtons';
 
-export default function Step1Introduction() {
+export default function Step1Introduction({ onNext }: { onNext: () => void }) {
   const { setIsStepValid } = useSurvey();
 
   useEffect(() => {
@@ -12,15 +13,28 @@ export default function Step1Introduction() {
   }, [setIsStepValid]);
 
   return (
-    <div className="text-center">
-      <h2 className="text-2xl font-semibold mb-4">
+    <div className="flex flex-col items-start p-8 max-w-md border border-gray-300 rounded-tl-2xl mt-8">
+      <h2 className="text-2xl font-semibold mb-4 text-left">
         Welcome to Medlink Survey
       </h2>
-      <p className="mb-6 text-foreground">
+      <p className="mb-6 text-foreground text-left leading-relaxed">
         Wealthy people use their investments to pay for their lifestyle.
+      </p>
+      <p className="mb-6 text-foreground text-left leading-relaxed">
         Now we&apos;re bringing this to you too.
+      </p>
+      <p className="mb-4 text-foreground text-left leading-relaxed">
         Answer a few questions about yourself and we will pair you with a solution that might just be right for you.
       </p>
+      <div className="mt-1">
+        <NavigationButtons
+          onBack={() => {}}
+          onNext={onNext}
+          showBack={false}
+          nextDisabled={false}
+          nextText="Get Started"
+        />
+      </div>
     </div>
   );
 }
