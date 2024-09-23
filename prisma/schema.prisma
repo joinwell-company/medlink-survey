@@ -17,6 +17,7 @@ model Survey {
   secondaryInvestmentGoals String[]
   monthlySavings           Float
   preferredTime            String
+  preferredDay             String   // New field
   phoneNumber              String
   additionalInfo           String?
   createdAt                DateTime @default(now())

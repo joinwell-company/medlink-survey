@@ -11,10 +11,12 @@ export default function Step2PersonalInfo() {
   useEffect(() => {
     const isValid = name.trim().length > 0
     setIsStepValid(isValid)
-    setError(isValid ? '' : 'Please enter your name')
 
     if (isValid) {
+      setError('')
       updateSurveyData({ name })
+    } else if (name.trim().length > 0) {
+      setError('Please enter your name')
     }
   }, [name, setIsStepValid, updateSurveyData])
 
