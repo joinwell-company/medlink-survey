@@ -1,0 +1,26 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model Survey {
+  id                       String   @id @default(uuid())
+  name                     String
+  email                    String
+  dateOfBirth              DateTime
+  primaryInvestmentGoals   String[]
+  secondaryInvestmentGoals String[]
+  monthlySavings           Float
+  preferredTime            String
+  phoneNumber              String
+  additionalInfo           String?
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+  financialWellbeing       Float
+  hasSavings               Float
+}

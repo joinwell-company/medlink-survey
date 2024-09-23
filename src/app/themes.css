@@ -1,0 +1,19 @@
+:root {
+  --background: 0 0% 100%;
+  --foreground: 0 0% 9%; /* This should be the blue color */
+  
+  /* Other variables */
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  /* ... rest of your variables ... */
+}
+
+.dark {
+  --background: 0 0% 4%;
+  --foreground: 210 100% 80%; /* Lighter blue for dark mode */
+  
+  /* Other dark mode variables */
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  /* ... rest of your dark mode variables ... */
+}
