@@ -20,12 +20,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       hasSavings,
       monthlySavings,
       preferredTime,
+      preferredDay, // New field
       phoneNumber,
       additionalInfo
     } = req.body;
 
     // Validate required fields
-    const requiredFields = ['name', 'email', 'dateOfBirth', 'financialWellbeing', 'hasSavings', 'preferredTime', 'phoneNumber'];
+    const requiredFields = ['name', 'email', 'dateOfBirth', 'financialWellbeing', 'hasSavings', 'preferredTime', 'preferredDay', 'phoneNumber']; // Updated required fields
     const missingFields = requiredFields.filter(field => !req.body[field]);
 
     if (missingFields.length > 0) {
@@ -67,6 +68,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         hasSavings: parsedHasSavings,
         monthlySavings: parsedMonthlySavings,
         preferredTime,
+        preferredDay, // New field
         phoneNumber,
         additionalInfo
       },

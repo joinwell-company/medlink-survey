@@ -11,6 +11,7 @@ export interface SurveyData {
   hasSavings?: number; // Changed from string to number
   monthlySavings?: number;
   preferredTime?: string;
+  preferredDay?: string; // New field
   phoneNumber?: string;
   additionalInfo?: string;
 }
