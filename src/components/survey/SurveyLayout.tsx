@@ -5,13 +5,15 @@ import Image from 'next/image';
 
 interface SurveyLayoutProps {
   children: ReactNode;
+  progressThickness?: string;
 }
 
-export default function SurveyLayout({ children }: SurveyLayoutProps) {
+export default function SurveyLayout({ children, progressThickness = "h-0.5" }: SurveyLayoutProps) {
   const { currentStep } = useSurvey();
   const totalSteps = 7;
 
   return (
+
     <div className="min-h-screen flex flex-col bg-background font-sans">
       {/* Main content */}
       <div className="flex-grow flex flex-col bg-white pb-8 pt-8 w-full max-w-6xl mx-auto rounded-lg shadow-lg">
@@ -49,6 +51,7 @@ export default function SurveyLayout({ children }: SurveyLayoutProps) {
                 <Image src="/doctor.svg" alt="Doctor" width={150} height={150} className="mb-4 absolute" style={{ right: '495px', bottom: '350px' }} />
                 <Image src="/green.svg" alt="Green" width={150} height={150} className="mb-4 absolute" style={{ right: '310px', bottom: '190px' }} />
                 <Image src="/trolley.svg" alt="Trolley" width={155} height={155} className="mb-4 absolute" style={{ right: '110px', bottom: '290px' }}/>
+
               </div>
             </div>
           ) : (
