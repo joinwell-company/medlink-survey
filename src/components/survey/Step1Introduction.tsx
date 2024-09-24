@@ -13,7 +13,7 @@ export default function Step1Introduction({ onNext }: { onNext: () => void }) {
   }, [setIsStepValid]);
 
   return (
-    <div className="flex flex-col items-start p-8 max-w-md border border-gray-300 rounded-tl-2xl mt-8">
+    <div className="flex flex-col items-start p-8 max-w-md border border-gray-300 rounded-tl-2xl">
       <h2 className="text-2xl font-semibold mb-4 text-left">
         Welcome to Medlink Survey
       </h2>
