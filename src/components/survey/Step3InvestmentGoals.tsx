@@ -69,10 +69,9 @@ export default function Step3InvestmentGoals({ isFirstPart }: Step3Props) {
             type="button"
             variant={
               selectedGoals.includes(goal) || additionalGoals.includes(goal)
-                ? "default"
+                ? "customGreen"
                 : "outline"
             }
-            
             onClick={() => toggleGoal(goal, !isFirstPart)}
             disabled={!isFirstPart && selectedGoals.includes(goal)}
             className={`h-24 text-sm ${

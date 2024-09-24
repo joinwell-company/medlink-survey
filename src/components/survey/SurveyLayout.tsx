@@ -5,9 +5,10 @@ import Image from 'next/image';
 
 interface SurveyLayoutProps {
   children: ReactNode;
+  progressThickness?: string;
 }
 
-export default function SurveyLayout({ children }: SurveyLayoutProps) {
+export default function SurveyLayout({ children, progressThickness = "h-0.5" }: SurveyLayoutProps) {
   const { currentStep } = useSurvey();
   const totalSteps = 7;
 
@@ -20,19 +21,22 @@ export default function SurveyLayout({ children }: SurveyLayoutProps) {
         {currentStep > 1 && currentStep < totalSteps && (
           <div className="relative w-full pb-8">
             <div className="relative w-full">
-              <Progress value={((currentStep - 1) / (totalSteps - 1)) * 100} className="w-full h-2" />
+              <Progress 
+                value={((currentStep - 1) / (totalSteps - 1)) * 100} 
+                className={`w-full ${progressThickness}`}
+              />
               <div
                 className="absolute top-1/2 transform -translate-y-1/2"
                 style={{ left: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }}
               >
-                <div className="w-4 h-4 bg-neutral-900 rounded-full border-2 border-white" />
+                <div className="w-4 h-4 bg-[#D3F898] rounded-full border-2 border-white" />
               </div>
             </div>
             <div
               className="absolute mt-4 transform -translate-x-1/2"
               style={{ left: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }}
             >
-              <div className="bg-neutral-200 text-neutral-800 px-2 py-1 rounded text-xs font-medium whitespace-nowrap">
+              <div className="bg-[#D3F898] text-neutral-800 px-2 py-1 rounded text-xs font-medium whitespace-nowrap">
                 {currentStep - 1}/{totalSteps - 1}
               </div>
             </div>
