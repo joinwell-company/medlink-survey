@@ -13,27 +13,29 @@ export default function Step1Introduction({ onNext }: { onNext: () => void }) {
   }, [setIsStepValid]);
 
   return (
-    <div className="flex flex-col items-start p-8 max-w-md border border-gray-300 rounded-tl-2xl">
-      <h2 className="text-2xl font-semibold mb-4 text-left">
-        Welcome to Medlink Survey
-      </h2>
-      <p className="mb-6 text-foreground text-left leading-relaxed">
-        Wealthy people use their investments to pay for their lifestyle.
-      </p>
-      <p className="mb-6 text-foreground text-left leading-relaxed">
-        Now we&apos;re bringing this to you too.
-      </p>
-      <p className="mb-4 text-foreground text-left leading-relaxed">
-        Answer a few questions about yourself and we will pair you with a solution that might just be right for you.
-      </p>
-      <div className="mt-1">
-        <NavigationButtons
-          onBack={() => {}}
-          onNext={onNext}
-          showBack={false}
-          nextDisabled={false}
-          nextText="Get Started"
-        />
+    <div className="p-8 pt-12 border border-gray-300 rounded-tl-[2rem] h-[380px] font-sf-pro">
+      <div className="flex flex-col align-around items-start">    
+        <h2 className="text-2xl font-semibold mb-4 text-left">
+          Welcome to Medlink Survey
+        </h2>
+        <p className="mb-6 text-foreground text-left leading-relaxed max-w-[35rem]">
+          Wealthy people use their investments to pay for their lifestyle.
+        </p>
+        <p className="mb-6 text-foreground text-left leading-relaxed max-w-[35rem]">
+          Now we&apos;re bringing this to you too.
+        </p>
+        <p className="mb-4 text-foreground text-left leading-relaxed max-w-[35rem]">
+          Answer a few questions about yourself and we will pair you with a solution that might just be right for you.
+        </p>
+        <div className="mt-1">
+          <NavigationButtons
+            onBack={() => {}}
+            onNext={onNext}
+            showBack={false}
+            nextDisabled={false}
+            nextText="Get Started"
+          />
+        </div>
       </div>
     </div>
   );
