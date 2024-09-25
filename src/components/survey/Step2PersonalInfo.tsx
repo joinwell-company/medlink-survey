@@ -22,9 +22,10 @@ export default function Step2PersonalInfo() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-semibold mb-4">What is your name?</h2>
       <div className="space-y-2">
-        <Label htmlFor="name">Full Name</Label>
+        <div className="flex flex-col items-center">
+          <Label htmlFor="name">Your Name</Label>
+        </div>
         <Input
           id="name"
           value={name}
