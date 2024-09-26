@@ -10,7 +10,7 @@ const PIPEDRIVE_API_URL = 'https://api.pipedrive.com/v1';
 
 async function sendToPipedrive(surveyData: any) {
   try {
-    // Create a person in Pipedrive with only standard fields
+    // Create a person in Pipedrive (keep this part as is)
     const personData = {
       name: surveyData.name,
       email: [{ value: surveyData.email, primary: true }],
@@ -26,20 +26,10 @@ async function sendToPipedrive(surveyData: any) {
 
     const personId = personResponse.data.data.id;
 
-    // Create a lead in Pipedrive, associating the person, and include custom fields
+    // Create a lead in Pipedrive with basic information
     const leadData = {
       title: `New Survey: ${surveyData.name}`,
       person_id: personId,
-      // Add custom fields here. Make sure to replace these with your actual custom field keys
-      'bfb78c07b9bb730d195d6b46043f665434bc1b44': surveyData.dateOfBirth,
-      'ceab9c4ada84eccf7958b97635454329d8ac0c9e': surveyData.primaryInvestmentGoals.join(', '),
-      'e8b1aa3141fe988eb38d3faf0d07d1b70b5e701c': surveyData.secondaryInvestmentGoals.join(', '),
-      'b2073baf491b560b669862ec6a060b2974e61142': surveyData.financialWellbeing,
-      'b720b37dd84a14f6d05c7901c7846f24da27eb83': surveyData.hasSavings,
-      '57b330b9575159e26278cd0dbdd7d68712c0139c': surveyData.monthlySavings,
-      '4b8497b4b8d35e96ede02577cf8f7247c87255cf': surveyData.preferredTime,
-      '54a01454a5cc706e33fdee7055e714a5644d82fa': surveyData.preferredDay,
-      '0894b691b7862ba947259da949780d0e14531f38': surveyData.additionalInfo,
     };
 
     const leadResponse = await axios.post(
@@ -48,6 +38,34 @@ async function sendToPipedrive(surveyData: any) {
     );
 
     console.log('Lead created in Pipedrive:', leadResponse.data);
+
+    const leadId = leadResponse.data.data.id;
+
+    // Create a note with the survey data
+    const noteContent = `
+      Survey Data:
+      - Date of Birth: ${surveyData.dateOfBirth}
+      - Primary Investment Goals: ${surveyData.primaryInvestmentGoals.join(', ')}
+      - Secondary Investment Goals: ${surveyData.secondaryInvestmentGoals.join(', ')}
+      - Financial Wellbeing: $${surveyData.financialWellbeing}
+      - Savings in 12 months: $${surveyData.hasSavings}
+      - Current Superannuation: $${surveyData.monthlySavings}
+      - Preferred Contact Time: ${surveyData.preferredTime}
+      - Preferred Contact Day: ${surveyData.preferredDay}
+      - Additional Info: ${surveyData.additionalInfo || 'None provided'}
+    `;
+
+    const noteData = {
+      content: noteContent,
+      lead_id: leadId,
+    };
+
+    const noteResponse = await axios.post(
+      `${PIPEDRIVE_API_URL}/notes?api_token=${PIPEDRIVE_API_TOKEN}`,
+      noteData
+    );
+
+    console.log('Note added to lead in Pipedrive:', noteResponse.data);
 
     console.log('Data sent to Pipedrive successfully');
   } catch (error) {

@@ -5,12 +5,12 @@ import { useSurvey } from '@/context/SurveyContext'
 import { Button } from '@/components/ui/button'
 
 const goals = [
-  'Gym',
-  'Holidays',
-  'Financial advice',
-  'Medicals',
+  'Wellness & Fitness',
+  'Travel & Recreation',
+  'Financial Planning',
+  'Medical essentials',
   'Health Insurance',
-  'Fitness & Physiotherapy'
+  'Specialist Healthcare'
 ]
 
 interface Step3Props {

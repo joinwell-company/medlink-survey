@@ -32,44 +32,42 @@ export default function Step6ScheduleContact() {
     phoneNumber: false,
   });
 
-  useEffect(() => {
-    const isPreferredTimeValid = preferredTime !== '';
-    const isPreferredDayValid = preferredDay !== '';
-    const isPhoneNumberValid = /^\d{10}$/.test(phoneNumber);
+  const isValid =
+    preferredTime !== '' &&
+    preferredDay !== '' &&
+    /^\d{10}$/.test(phoneNumber);
 
-    const isValid =
-      isPreferredTimeValid && isPreferredDayValid && isPhoneNumberValid;
+  useEffect(() => {
     setIsStepValid(isValid);
 
     setErrors({
       preferredTime:
-        touched.preferredTime && !isPreferredTimeValid
+        touched.preferredTime && !preferredTime
           ? 'Please select a preferred contact time'
           : '',
       preferredDay:
-        touched.preferredDay && !isPreferredDayValid
+        touched.preferredDay && !preferredDay
           ? 'Please select a preferred contact day'
           : '',
       phoneNumber:
-        touched.phoneNumber && !isPhoneNumberValid
+        touched.phoneNumber && !/^\d{10}$/.test(phoneNumber)
           ? 'Please enter a valid 10-digit phone number'
           : '',
     });
 
-    if (isValid) {
-      updateSurveyData({
-        preferredTime,
-        preferredDay,
-        phoneNumber,
-        additionalInfo,
-      });
-    }
+    updateSurveyData({
+      preferredTime,
+      preferredDay,
+      phoneNumber,
+      additionalInfo,
+    });
   }, [
     preferredTime,
     preferredDay,
     phoneNumber,
     additionalInfo,
     touched,
+    isValid,
     setIsStepValid,
     updateSurveyData,
   ]);

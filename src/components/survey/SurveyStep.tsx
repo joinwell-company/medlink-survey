@@ -10,8 +10,9 @@ import Step7ThankYou from './Step7ThankYou';
 import { NavigationButtons } from '@/components/ui/NavigationButtons';
 
 export default function SurveyStep() {
-  const { currentStep, setCurrentStep, isStepValid, surveyData, setSubmitError } = useSurvey();
+  const { currentStep, setCurrentStep, isStepValid, surveyData, setSubmitError, submitSurvey } = useSurvey();
   const [isStep3FirstPart, setIsStep3FirstPart] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     setSubmitError(null);
@@ -25,11 +26,11 @@ export default function SurveyStep() {
     }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (isStepValid) {
       const requiredFields: { [key: number]: string[] } = {
         2: ['name'],
-        4: ['financialWellbeing', 'hasSavings', 'monthlySavings'],
+         4: ['financialWellbeing', 'hasSavings', 'monthlySavings'],
         5: ['email', 'dateOfBirth'],
         6: ['preferredTime', 'phoneNumber']
       };
@@ -40,7 +41,18 @@ export default function SurveyStep() {
       if (missingFields.length > 0) {
         setSubmitError(`Please fill in the following fields: ${missingFields.join(', ')}`);
       } else {
-        if (currentStep === 3) {
+        if (currentStep === 6) {
+          setIsSubmitting(true);
+          try {
+            await submitSurvey();
+            setCurrentStep(7);
+          } catch (error) {
+            console.error('Error submitting survey:', error);
+            setSubmitError('Failed to submit the survey. Please try again.');
+          } finally {
+            setIsSubmitting(false);
+          }
+        } else if (currentStep === 3) {
           if (isStep3FirstPart) {
             setIsStep3FirstPart(false);
           } else {
@@ -74,13 +86,13 @@ export default function SurveyStep() {
   return (
     <div>
       {renderStep()}
-      {currentStep !== 1 && (
+      {currentStep !== 1 && currentStep !== 7 && (
         <NavigationButtons
           onBack={handleBack}
           onNext={handleNext}
           showBack={currentStep > 1}
-          nextDisabled={!isStepValid}
-          nextText={currentStep === 7 ? "Submit" : "Next"}
+          nextDisabled={!isStepValid || isSubmitting}
+          nextText={currentStep === 6 ? (isSubmitting ? "Submitting..." : "Submit") : "Next"}
         />
       )}
     </div>

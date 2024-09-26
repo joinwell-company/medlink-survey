@@ -1,0 +1,97 @@
+@media (max-width: 640px) {
+  .doctorImage {
+    right: 5% !important;
+    bottom: 70% !important;
+  }
+  .greenImage {
+    right: 25% !important;
+    bottom: 40% !important;
+  }
+  .trolleyImage {
+    right: 45% !important;
+    bottom: 55% !important;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .doctorImage {
+    right: 8% !important;
+    bottom: 65% !important;
+  }
+  .greenImage {
+    right: 28% !important;
+    bottom: 35% !important;
+  }
+  .trolleyImage {
+    right: 48% !important;
+    bottom: 50% !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .doctorImage {
+    right: 495px;
+    bottom: 350px;
+  }
+  .greenImage {
+    right: 310px;
+    bottom: 190px;
+  }
+  .trolleyImage {
+    right: 110px;
+    bottom: 290px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .doctorImage {
+    right: 595px;
+    bottom: 400px;
+  }
+  .greenImage {
+    right: 410px;
+    bottom: 240px;
+  }
+  .trolleyImage {
+    right: 210px;
+    bottom: 340px;
+  }
+}
+
+.backgroundImage {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 25%; /* Adjust this value to control the size on mobile */
+  max-width: 300px;
+  height: auto;
+  z-index: 0;
+}
+
+.fadedBackground {
+  opacity: 0.5;
+}
+
+@media (min-width: 640px) {
+  .backgroundImage {
+    width: 30%;
+  }
+}
+
+@media (min-width: 768px) {
+  .backgroundImage {
+    width: 35%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .backgroundImage {
+    width: 40%;
+  }
+}
+
+@media (min-width: 1280px) {
+  .backgroundImage {
+    width: 45%;
+  }
+}

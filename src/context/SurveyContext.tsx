@@ -26,6 +26,7 @@ interface SurveyContextType {
   submitError: string | null;
   setSubmitError: (error: string | null) => void;
   submitSurvey: () => Promise<void>;
+  resetSurvey: () => void;  // Add this line
 }
 
 const SurveyContext = createContext<SurveyContextType | undefined>(undefined);
@@ -42,39 +43,36 @@ export function SurveyProvider({ children }: { children: ReactNode }) {
 
   const submitSurvey = async () => {
     try {
-      const response = await axios.post('/api/submit-survey', {
-        ...surveyData,
-        financialWellbeing: parseFloat(surveyData.financialWellbeing?.toString() || '0'),
-        hasSavings: parseFloat(surveyData.hasSavings?.toString() || '0'),
-        monthlySavings: parseFloat(surveyData.monthlySavings?.toString() || '0'),
-      });
-      if (response.status === 200) {
-        setSubmitError(null);
-        return response.data;
-      }
+      const response = await axios.post('/api/submit-survey', surveyData);
+      console.log('Survey submitted successfully:', response.data);
+      // You can add additional logic here if needed
     } catch (error) {
       console.error('Error submitting survey:', error);
-      setSubmitError('Failed to submit survey. Please try again.');
+      throw error; // Re-throw the error to be handled in the component
     }
   };
 
-  return (
-    <SurveyContext.Provider
-      value={{
-        currentStep,
-        setCurrentStep,
-        isStepValid,
-        setIsStepValid,
-        surveyData,
-        updateSurveyData,
-        submitError,
-        setSubmitError,
-        submitSurvey,
-      }}
-    >
-      {children}
-    </SurveyContext.Provider>
-  );
+  const resetSurvey = useCallback(() => {
+    setCurrentStep(1);
+    setSurveyData({});
+    setIsStepValid(false);
+    setSubmitError(null);
+  }, []);
+
+  const value: SurveyContextType = {
+    currentStep,
+    setCurrentStep,
+    isStepValid,
+    setIsStepValid,
+    surveyData,
+    updateSurveyData,
+    submitError,
+    setSubmitError,
+    submitSurvey,
+    resetSurvey,  // Add this line
+  };
+
+  return <SurveyContext.Provider value={value}>{children}</SurveyContext.Provider>;
 }
 
 export function useSurvey() {
