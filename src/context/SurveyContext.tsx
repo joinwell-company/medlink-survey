@@ -26,7 +26,7 @@ interface SurveyContextType {
   submitError: string | null;
   setSubmitError: (error: string | null) => void;
   submitSurvey: () => Promise<void>;
-  resetSurvey: () => void;  // Add this line
+  resetSurvey: () => void;  
 }
 
 const SurveyContext = createContext<SurveyContextType | undefined>(undefined);
@@ -69,8 +69,9 @@ export function SurveyProvider({ children }: { children: ReactNode }) {
     submitError,
     setSubmitError,
     submitSurvey,
-    resetSurvey,  // Add this line
+    resetSurvey,  
   };
+
 
   return <SurveyContext.Provider value={value}>{children}</SurveyContext.Provider>;
 }

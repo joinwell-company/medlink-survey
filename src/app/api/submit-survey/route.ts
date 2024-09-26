@@ -1,9 +1,7 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import { NextResponse } from 'next/server';
 import axios from 'axios';
 import { AxiosError } from 'axios';
-
-const prisma = new PrismaClient();
+import prisma from '@/lib/prisma';
 
 const PIPEDRIVE_API_TOKEN = process.env.PIPEDRIVE_API_TOKEN;
 const PIPEDRIVE_API_URL = 'https://api.pipedrive.com/v1';
@@ -78,13 +76,9 @@ async function sendToPipedrive(surveyData: any) {
   }
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', ['POST']);
-    return res.status(405).end(`Method ${req.method} Not Allowed`);
-  }
-
+export async function POST(request: Request) {
   try {
+    const body = await request.json();
     const {
       name,
       email,
@@ -98,7 +92,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       preferredDay,
       phoneNumber,
       additionalInfo,
-    } = req.body;
+    } = body;
 
     // Validate required fields
     const requiredFields = [
@@ -111,18 +105,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       'preferredDay',
       'phoneNumber',
     ];
-    const missingFields = requiredFields.filter((field) => !req.body[field]);
+    const missingFields = requiredFields.filter((field) => !body[field]);
 
     if (missingFields.length > 0) {
-      return res
-        .status(400)
-        .json({ message: `Missing required fields: ${missingFields.join(', ')}` });
+      return NextResponse.json({
+        message: `Missing required fields: ${missingFields.join(', ')}`,
+      }, { status: 400 });
     }
 
     // Validate and parse date of birth
     const dob = new Date(dateOfBirth);
     if (isNaN(dob.getTime())) {
-      return res.status(400).json({ message: 'Invalid date of birth' });
+      return NextResponse.json({ message: 'Invalid date of birth' }, { status: 400 });
     }
     // Format date to YYYY-MM-DD for Pipedrive
     const formattedDob = dob.toISOString().split('T')[0];
@@ -137,7 +131,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       isNaN(parsedHasSavings) ||
       (monthlySavings && isNaN(parsedMonthlySavings))
     ) {
-      return res.status(400).json({ message: 'Invalid numeric values' });
+      return NextResponse.json({ message: 'Invalid numeric values' }, { status: 400 });
     }
 
     const survey = await prisma.survey.create({
@@ -163,10 +157,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       dateOfBirth: formattedDob, // Use formatted date
     });
 
-    res.status(200).json({
+    return NextResponse.json({
       message: 'Survey submitted successfully and sent to Pipedrive',
       survey,
-    });
+    }, { status: 200 });
   } catch (error) {
     console.error('Error processing survey:', error);
     if (error instanceof AxiosError && error.response) {
@@ -176,9 +170,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } else {
       console.error('Unexpected error:', error);
     }
-    res.status(500).json({
+    return NextResponse.json({
       message: 'Error processing survey',
       error: error instanceof Error ? error.message : 'An unknown error occurred',
-    });
+    }, { status: 500 });
   }
 }
