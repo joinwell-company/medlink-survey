@@ -101,7 +101,7 @@ export default function SurveyLayout({ children, onSubmit }: SurveyLayoutProps) 
       <div className={`absolute bottom-0 right-0 z-0 w-32 sm:w-48 md:w-64 lg:w-80 ${styles.backgroundImage} ${currentStep === 1 ? '' : styles.fadedBackground}`}>
         <Image 
           src={currentStep === 1 ? "/mbold.svg" : "/mfaded.svg"} 
-          alt="M background" 
+          alt="Mbackground" 
           layout="responsive" 
           width={300} 
           height={300} 
