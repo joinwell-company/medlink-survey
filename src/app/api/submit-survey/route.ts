@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 import axios from 'axios';
 import { AxiosError } from 'axios';
-
-const prisma = new PrismaClient();
+import prisma from '@/lib/prisma';
 
 const PIPEDRIVE_API_TOKEN = process.env.PIPEDRIVE_API_TOKEN;
 const PIPEDRIVE_API_URL = 'https://api.pipedrive.com/v1';
