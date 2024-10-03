@@ -20,10 +20,11 @@ export default function Step5ContactInfo() {
     };
 
     const validateDateOfBirth = (dob: string) => {
-      const date = new Date(dob);
+      const [day, month, year] = dob.split('/').map(Number);
+      const date = new Date(year, month - 1, day);
       const now = new Date();
       return (
-        !isNaN(date.getTime()) &&
+        date instanceof Date && !isNaN(date.getTime()) &&
         date < now &&
         date.getFullYear() > 1900 &&
         date.getFullYear() < now.getFullYear()
@@ -35,25 +36,26 @@ export default function Step5ContactInfo() {
 
     setErrors({
       email: emailTouched && !emailValid ? 'Please enter a valid email address' : '',
-      dateOfBirth:
-        dateOfBirthTouched && !dobValid ? 'Please enter a valid date of birth' : '',
+      dateOfBirth: dateOfBirthTouched && !dobValid ? 'Please enter a valid date of birth' : '',
     });
 
-    const isValid =
-      email !== '' && dateOfBirth !== '' && emailValid && dobValid;
+    const isValid = email !== '' && dateOfBirth !== '' && emailValid && dobValid;
     setIsStepValid(isValid);
 
     if (isValid) {
-      updateSurveyData({ email, dateOfBirth });
+      const [day, month, year] = dateOfBirth.split('/').map(Number);
+      const formattedDate = new Date(year, month - 1, day).toISOString();
+      updateSurveyData({ email, dateOfBirth: formattedDate });
     }
-  }, [
-    email,
-    dateOfBirth,
-    emailTouched,
-    dateOfBirthTouched,
-    setIsStepValid,
-    updateSurveyData,
-  ]);
+  }, [email, dateOfBirth, emailTouched, dateOfBirthTouched, setIsStepValid, updateSurveyData]);
+
+  const handleDateOfBirthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length > 8) value = value.slice(0, 8);
+    if (value.length > 4) value = `${value.slice(0, 2)}/${value.slice(2, 4)}/${value.slice(4)}`;
+    else if (value.length > 2) value = `${value.slice(0, 2)}/${value.slice(2)}`;
+    setDateOfBirth(value);
+  };
 
   return (
     <form className="space-y-6">
@@ -75,15 +77,14 @@ export default function Step5ContactInfo() {
         <Label htmlFor="dob">What is your date of birth?</Label>
         <Input
           id="dob"
-          type="date"
+          type="text"
           value={dateOfBirth}
-          onChange={(e) => setDateOfBirth(e.target.value)}
+          onChange={handleDateOfBirthChange}
           onBlur={() => setDateOfBirthTouched(true)}
+          placeholder="DD/MM/YYYY"
           required
         />
-        {errors.dateOfBirth && (
-          <p className="text-red-500 text-sm">{errors.dateOfBirth}</p>
-        )}
+        {errors.dateOfBirth && <p className="text-red-500 text-sm">{errors.dateOfBirth}</p>}
       </div>
     </form>
   );

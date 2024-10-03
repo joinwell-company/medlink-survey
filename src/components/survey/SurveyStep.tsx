@@ -8,6 +8,7 @@ import Step5ContactInfo from './Step5ContactInfo';
 import Step6ScheduleContact from './Step6ScheduleContact';
 import Step7ThankYou from './Step7ThankYou';
 import { NavigationButtons } from '@/components/ui/NavigationButtons';
+import { trackEvent } from '@/lib/umami';
 
 export default function SurveyStep() {
   const { currentStep, setCurrentStep, isStepValid, surveyData, setSubmitError, submitSurvey } = useSurvey();
@@ -24,6 +25,7 @@ export default function SurveyStep() {
     } else {
       setCurrentStep(currentStep > 1 ? currentStep - 1 : 1);
     }
+    trackEvent('navigate_back', { from_step: currentStep });
   };
 
   const handleNext = async () => {
@@ -40,15 +42,18 @@ export default function SurveyStep() {
 
       if (missingFields.length > 0) {
         setSubmitError(`Please fill in the following fields: ${missingFields.join(', ')}`);
+        trackEvent('validation_error', { step: currentStep, missing_fields: missingFields });
       } else {
         if (currentStep === 6) {
           setIsSubmitting(true);
           try {
             await submitSurvey();
             setCurrentStep(7);
+            trackEvent('survey_submitted', surveyData);
           } catch (error) {
             console.error('Error submitting survey:', error);
             setSubmitError('Failed to submit the survey. Please try again.');
+            trackEvent('submission_error', { error: (error as Error).message });
           } finally {
             setIsSubmitting(false);
           }
@@ -61,6 +66,7 @@ export default function SurveyStep() {
         } else {
           setCurrentStep(currentStep < 7 ? currentStep + 1 : 7);
         }
+        trackEvent('complete_step', { step: currentStep });
       }
     }
   };

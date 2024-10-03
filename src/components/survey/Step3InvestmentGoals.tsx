@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useSurvey } from '@/context/SurveyContext'
 import { Button } from '@/components/ui/button'
+import { trackEvent } from '@/lib/umami'
 
 const goals = [
   'Wellness & Fitness',
@@ -46,6 +47,7 @@ export default function Step3InvestmentGoals({ isFirstPart }: Step3Props) {
           : prev.length < 3 ? [...prev, goal] : prev
       )
     }
+    trackEvent('toggle_investment_goal', { goal, isAdditional, action: prev.includes(goal) ? 'remove' : 'add' });
   }
 
   useEffect(() => {
