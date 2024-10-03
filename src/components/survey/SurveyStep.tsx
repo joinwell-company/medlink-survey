@@ -25,13 +25,13 @@ export default function SurveyStep() {
     } else {
       setCurrentStep(currentStep > 1 ? currentStep - 1 : 1);
     }
-    trackEvent('navigate_back', { from_step: currentStep });
+    trackEvent('navigate_back', { from_step: currentStep, to_step: currentStep - 1 });
   };
 
   const handleNext = async () => {
     if (isStepValid) {
       const requiredFields: { [key: number]: string[] } = {
-        2: ['name'],
+         2: ['name'],
          4: ['financialWellbeing', 'hasSavings', 'monthlySavings'],
         5: ['email', 'dateOfBirth'],
         6: ['preferredTime', 'phoneNumber']

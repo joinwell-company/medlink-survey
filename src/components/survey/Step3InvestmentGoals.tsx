@@ -72,6 +72,12 @@ export default function Step3InvestmentGoals({ isFirstPart }: Step3Props) {
     })
   }, [selectedGoals, additionalGoals, updateSurveyData])
 
+  useEffect(() => {
+    if (!isFirstPart) {
+      trackEvent('step3_second_part_view');
+    }
+  }, [isFirstPart]);
+
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-semibold mb-4">

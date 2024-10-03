@@ -1,35 +1,35 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { Progress } from '@/components/ui/progress';
 import { useSurvey } from '@/context/SurveyContext';
 import Image from 'next/image';
 import styles from './SurveyLayout.module.css';
-import { NavigationButtons } from '@/components/ui/NavigationButtons';
+import { trackEvent } from '@/lib/umami';
 
 interface SurveyLayoutProps {
   children: ReactNode;
   progressThickness?: string;
-  onSubmit?: () => Promise<boolean>;
 }
 
-export default function SurveyLayout({ children, onSubmit }: SurveyLayoutProps) {
-  const { currentStep, setCurrentStep, isStepValid, surveyData } = useSurvey();
+export default function SurveyLayout({ children, progressThickness = '0.5' }: SurveyLayoutProps) {
+  const { currentStep, setCurrentStep } = useSurvey();
 
-  const handleNext = async () => {
-    if (currentStep === 6 && onSubmit) {
-      const success = await onSubmit();
-      if (success) {
-        setCurrentStep(currentStep + 1);
-      }
-    } else {
-      setCurrentStep(currentStep + 1);
-    }
-  };
+  useEffect(() => {
+    const handlePopState = () => {
+      setCurrentStep(Math.max(1, currentStep - 1));
+      trackEvent('browser_back_button', { from_step: currentStep });
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [setCurrentStep]);
 
   return (
     <div className="min-h-screen flex flex-col bg-background font-sans relative">
       <header className="w-full bg-white shadow-md">
         <div className="container mx-auto px-4 py-4 flex items-center">
-          {/* Responsive logo size */}
           <Image src="/logo.svg" alt="Medlink Logo" width={150} height={150} className="w-32 sm:w-40 md:w-48 lg:w-56 h-auto mr-4" />
         </div>
         {currentStep > 1 && currentStep < 7 && (
@@ -37,7 +37,7 @@ export default function SurveyLayout({ children, onSubmit }: SurveyLayoutProps) 
             <div className="relative w-full">
               <Progress 
                 value={((currentStep - 1) / (7 - 1)) * 100} 
-                className={`w-full h-0.5`}
+                className={`w-full h-${progressThickness}`}
               />
               <div
                 className="absolute top-1/2 transform -translate-y-1/2"
@@ -58,9 +58,7 @@ export default function SurveyLayout({ children, onSubmit }: SurveyLayoutProps) 
         )}
       </header>
 
-      {/* Main content */}
       <div className="flex-grow flex flex-col bg-white pb-8 pt-4 sm:pt-8 w-full max-w-6xl mx-auto rounded-lg shadow-lg mt-4 px-4 sm:px-6 lg:px-8">
-        {/* Main content section */}
         <main className={`flex-grow flex ${currentStep === 1 ? 'items-start justify-start' : 'items-center justify-center'}`}>
           {currentStep === 1 ? (
             <div className="flex flex-col lg:flex-row w-full">
@@ -70,7 +68,6 @@ export default function SurveyLayout({ children, onSubmit }: SurveyLayoutProps) 
                 </div>
               </div>
               <div className="hidden lg:flex flex-col items-center justify-center lg:ml-8 relative">
-                {/* Images only visible on larger screens */}
                 <Image src="/doctor.svg" alt="Doctor" width={150} height={150} className={`mb-4 absolute ${styles.doctorImage}`} />
                 <Image src="/green.svg" alt="Green" width={150} height={150} className={`mb-4 absolute ${styles.greenImage}`} />
                 <Image src="/trolley.svg" alt="Trolley" width={155} height={155} className={`mb-4 absolute ${styles.trolleyImage}`} />
@@ -84,7 +81,6 @@ export default function SurveyLayout({ children, onSubmit }: SurveyLayoutProps) 
             </div>
           )}
         </main>
-        {/* Footer */}
         <footer className="w-full mt-auto z-20">
           <div className="bg-[#F2F2F2] rounded-lg p-4 shadow flex flex-col xs:flex-row items-center justify-between max-w-6xl mx-auto">
             <div className="text-gray-400 text-xs mb-2 xs:mb-0 text-center xs:text-left">
@@ -97,7 +93,6 @@ export default function SurveyLayout({ children, onSubmit }: SurveyLayoutProps) 
           </div>
         </footer>
       </div>
-      {/* Background image - now visible on all devices */}
       <div className={`absolute bottom-0 right-0 z-0 w-32 sm:w-48 md:w-64 lg:w-80 ${styles.backgroundImage} ${currentStep === 1 ? '' : styles.fadedBackground}`}>
         <Image 
           src={currentStep === 1 ? "/mbold.svg" : "/mfaded.svg"} 
@@ -107,7 +102,6 @@ export default function SurveyLayout({ children, onSubmit }: SurveyLayoutProps) 
           height={300} 
         />
       </div>
-      
     </div>
   );
 }
