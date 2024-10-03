@@ -35,19 +35,34 @@ export default function Step3InvestmentGoals({ isFirstPart }: Step3Props) {
   const toggleGoal = (goal: string, isAdditional: boolean = false) => {
     console.log('Toggling goal:', goal, 'isAdditional:', isAdditional)
     if (isAdditional) {
-      setAdditionalGoals(prev =>
-        prev.includes(goal)
+      setAdditionalGoals(prev => {
+        const newGoals = prev.includes(goal)
           ? prev.filter(g => g !== goal)
-          : prev.length < 2 ? [...prev, goal] : prev
-      )
+          : prev.length < 2 ? [...prev, goal] : prev;
+        
+        trackEvent('toggle_investment_goal', { 
+          goal, 
+          isAdditional, 
+          action: prev.includes(goal) ? 'remove' : 'add' 
+        });
+        
+        return newGoals;
+      })
     } else {
-      setSelectedGoals(prev =>
-        prev.includes(goal)
+      setSelectedGoals(prev => {
+        const newGoals = prev.includes(goal)
           ? prev.filter(g => g !== goal)
-          : prev.length < 3 ? [...prev, goal] : prev
-      )
+          : prev.length < 3 ? [...prev, goal] : prev;
+        
+        trackEvent('toggle_investment_goal', { 
+          goal, 
+          isAdditional, 
+          action: prev.includes(goal) ? 'remove' : 'add' 
+        });
+        
+        return newGoals;
+      })
     }
-    trackEvent('toggle_investment_goal', { goal, isAdditional, action: prev.includes(goal) ? 'remove' : 'add' });
   }
 
   useEffect(() => {
