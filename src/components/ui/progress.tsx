@@ -8,11 +8,11 @@ import { cn } from "@/lib/utils"
 const Progress = React.forwardRef<
   React.ElementRef<typeof ProgressPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root> & { thickness?: string }
->(({ className, value, thickness = "h-1", ...props }, ref) => (
+>(({ className, value,  ...props }, ref) => (
   <ProgressPrimitive.Root
     ref={ref}
     className={cn(
-      `relative ${thickness} w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800`,
+      `relative  w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800`,
       className
     )}
     {...props}

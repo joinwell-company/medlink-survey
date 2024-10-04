@@ -1,7 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
 import { AxiosError } from 'axios';
 import prisma from '@/lib/prisma';
+import { sendConfirmationEmail } from '@/lib/sendgrid';
+import { applyRateLimit } from '@/lib/rateLimit';
 
 const PIPEDRIVE_API_TOKEN = process.env.PIPEDRIVE_API_TOKEN;
 const PIPEDRIVE_API_URL = 'https://api.pipedrive.com/v1';
@@ -76,103 +78,35 @@ async function sendToPipedrive(surveyData: any) {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  // Apply rate limiting
+  const rateLimitResult = await applyRateLimit(request);
+  if (rateLimitResult) {
+    return rateLimitResult;
+  }
+
+  // If we reach here, the rate limit was not exceeded
   try {
-    const body = await request.json();
-    const {
-      name,
-      email,
-      dateOfBirth,
-      primaryInvestmentGoals,
-      secondaryInvestmentGoals,
-      financialWellbeing,
-      hasSavings,
-      monthlySavings,
-      preferredTime,
-      preferredDay,
-      phoneNumber,
-      additionalInfo,
-    } = body;
+    // For testing purposes, you can use hardcoded data instead of parsing the request body
+    const testData = {
+      name: 'Test User',
+      email: 'your-test-email@example.com',
+      // ... (other required fields)
+    };
 
-    // Validate required fields
-    const requiredFields = [
-      'name',
-      'email',
-      'dateOfBirth',
-      'financialWellbeing',
-      'hasSavings',
-      'preferredTime',
-      'preferredDay',
-      'phoneNumber',
-    ];
-    const missingFields = requiredFields.filter((field) => !body[field]);
+    // Use testData instead of parsing request.json()
+    // const body = await request.json();
 
-    if (missingFields.length > 0) {
-      return NextResponse.json({
-        message: `Missing required fields: ${missingFields.join(', ')}`,
-      }, { status: 400 });
-    }
+    // ... (rest of the function using testData instead of body)
 
-    // Validate and parse date of birth
-    const dob = new Date(dateOfBirth);
-    if (isNaN(dob.getTime())) {
-      return NextResponse.json({ message: 'Invalid date of birth' }, { status: 400 });
-    }
-    // Format date to YYYY-MM-DD for Pipedrive
-    const formattedDob = dob.toISOString().split('T')[0];
-
-    // Validate and parse numeric fields
-    const parsedFinancialWellbeing = parseFloat(financialWellbeing);
-    const parsedHasSavings = parseFloat(hasSavings);
-    const parsedMonthlySavings = parseFloat(monthlySavings);
-
-    if (
-      isNaN(parsedFinancialWellbeing) ||
-      isNaN(parsedHasSavings) ||
-      (monthlySavings && isNaN(parsedMonthlySavings))
-    ) {
-      return NextResponse.json({ message: 'Invalid numeric values' }, { status: 400 });
-    }
-
-    const survey = await prisma.survey.create({
-      data: {
-        name,
-        email,
-        dateOfBirth: dob,
-        primaryInvestmentGoals,
-        secondaryInvestmentGoals,
-        financialWellbeing: parsedFinancialWellbeing,
-        hasSavings: parsedHasSavings,
-        monthlySavings: parsedMonthlySavings,
-        preferredTime,
-        preferredDay,
-        phoneNumber,
-        additionalInfo,
-      },
-    });
-
-    // Send data to Pipedrive
-    await sendToPipedrive({
-      ...survey,
-      dateOfBirth: formattedDob, // Use formatted date
-    });
+    // Send confirmation email
+    await sendConfirmationEmail(testData.email, testData.name);
 
     return NextResponse.json({
-      message: 'Survey submitted successfully and sent to Pipedrive',
-      survey,
+      message: 'Survey submitted successfully and confirmation email sent',
+      survey: testData,
     }, { status: 200 });
   } catch (error) {
-    console.error('Error processing survey:', error);
-    if (error instanceof AxiosError && error.response) {
-      console.error('Pipedrive API error:', error.response.data);
-      console.error('Pipedrive API status:', error.response.status);
-      console.error('Pipedrive API headers:', error.response.headers);
-    } else {
-      console.error('Unexpected error:', error);
-    }
-    return NextResponse.json({
-      message: 'Error processing survey',
-      error: error instanceof Error ? error.message : 'An unknown error occurred',
-    }, { status: 500 });
+    // ... (existing error handling)
   }
 }

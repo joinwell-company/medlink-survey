@@ -24,7 +24,7 @@ export default function SurveyLayout({ children, progressThickness = '0.5' }: Su
     return () => {
       window.removeEventListener('popstate', handlePopState);
     };
-  }, [setCurrentStep]);
+  }, [setCurrentStep, currentStep]);
 
   return (
     <div className="min-h-screen flex flex-col bg-background font-sans relative">
