@@ -52,7 +52,7 @@ export default function SurveyStep() {
             trackEvent('survey_submitted', surveyData);
           } catch (error) {
             console.error('Error submitting survey:', error);
-            setSubmitError('Failed to submit the survey. Please try again.');
+            setSubmitError((error as Error).message || 'Failed to submit the survey. Please try again.');
             trackEvent('submission_error', { error: (error as Error).message });
           } finally {
             setIsSubmitting(false);

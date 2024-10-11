@@ -10,7 +10,7 @@ interface SurveyLayoutProps {
   progressThickness?: string;
 }
 
-export default function SurveyLayout({ children, progressThickness = '0.5' }: SurveyLayoutProps) {
+export default function SurveyLayout({ children, progressThickness = '1' }: SurveyLayoutProps) {
   const { currentStep, setCurrentStep } = useSurvey();
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export default function SurveyLayout({ children, progressThickness = '0.5' }: Su
     return () => {
       window.removeEventListener('popstate', handlePopState);
     };
-  }, [setCurrentStep]);
+  }, [setCurrentStep, currentStep]);
 
   return (
     <div className="min-h-screen flex flex-col bg-background font-sans relative">
@@ -37,7 +37,8 @@ export default function SurveyLayout({ children, progressThickness = '0.5' }: Su
             <div className="relative w-full">
               <Progress 
                 value={((currentStep - 1) / (7 - 1)) * 100} 
-                className={`w-full h-${progressThickness}`}
+                className="w-full"
+                thickness={progressThickness}
               />
               <div
                 className="absolute top-1/2 transform -translate-y-1/2"
