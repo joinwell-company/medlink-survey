@@ -8,7 +8,7 @@ if (!process.env.SENDGRID_API_KEY || !process.env.SENDGRID_FROM_EMAIL) {
 // Initialize SendGrid with your API key
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-export async function sendConfirmationEmail(to: string, name: string): Promise<void> {
+export async function sendConfirmationEmail(to: string, first_name: string): Promise<void> {
   try {
     const msg: sgMail.MailDataRequired = {
       to,
@@ -18,7 +18,7 @@ export async function sendConfirmationEmail(to: string, name: string): Promise<v
       },
       templateId: 'd-33dcfbeecdf24280858f16dc6c4f20c9',
       dynamicTemplateData: {
-        name: name,
+        first_name: first_name,
         current_year: new Date().getFullYear(),
         // Add any other dynamic data your template uses
       },
